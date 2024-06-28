@@ -12,6 +12,8 @@ import com.wesleybertipaglia.bank.dtos.AccountDTO;
 import com.wesleybertipaglia.bank.models.Account;
 import com.wesleybertipaglia.bank.services.AccountService;
 
+import org.springframework.http.HttpStatus;
+
 @RestController
 @RequestMapping("/accounts")
 public class AccountController {
@@ -20,34 +22,43 @@ public class AccountController {
     private AccountService accountService;
 
     @GetMapping("/")
-    public List<AccountDTO> listAccounts() {
-        return accountService.listAccounts();
+    public ResponseEntity<List<AccountDTO>> listAccounts() {
+        List<AccountDTO> accounts = accountService.listAccounts();
+        return ResponseEntity.ok(accounts);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AccountDTO> getAccountById(@PathVariable UUID id) {
-        Optional<AccountDTO> account = accountService.getAccountById(id);
-        return account.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return accountService.getAccountById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/{agencyId}")
-    public AccountDTO createAccount(@PathVariable UUID agencyId, @RequestBody Account account) {
-        return accountService.createAccount(agencyId, account);
+    public ResponseEntity<?> createAccount(@PathVariable UUID agencyId, @RequestBody Account account) {
+        try {
+            AccountDTO createdAccount = accountService.createAccount(agencyId, account);
+            return ResponseEntity.status(201).body(createdAccount);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AccountDTO> updateAccount(@PathVariable UUID id, @RequestBody Account account) {
-        Optional<AccountDTO> updatedAccount = accountService.updateAccount(id, account);
-        return updatedAccount.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> updateAccount(@PathVariable UUID id, @RequestBody Account account) {
+        try {
+            return ResponseEntity.ok(accountService.updateAccount(id, account));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAccount(@PathVariable UUID id) {
+    public ResponseEntity<?> deleteAccount(@PathVariable UUID id) {
         try {
-            accountService.deleteAccount(id);
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok(accountService.deleteAccount(id));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
 }

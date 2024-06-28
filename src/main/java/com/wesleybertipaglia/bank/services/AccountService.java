@@ -35,24 +35,34 @@ public class AccountService {
         Agency agency = agencyRepository.findById(agencyId)
                 .orElseThrow(() -> new IllegalArgumentException("Agency not found"));
 
+        if (accountRepository.findByNumber(account.getNumber()) != null) {
+            throw new IllegalArgumentException("Account number already exists");
+        }
+
         account.setAgency(agency);
         Account savedAccount = accountRepository.save(account);
         return convertToDTO(savedAccount);
     }
 
     public Optional<AccountDTO> updateAccount(UUID id, Account account) {
-        return accountRepository.findById(id).map(existingAccount -> {
-            existingAccount.setNumber(account.getNumber());
-            existingAccount.setBalance(account.getBalance());
-            existingAccount.setAgency(account.getAgency());
-            Account updatedAccount = accountRepository.save(existingAccount);
-            return convertToDTO(updatedAccount);
-        });
+        Account existingAccount = accountRepository.findByNumber(account.getNumber());
+
+        if (existingAccount == null) {
+            throw new IllegalArgumentException("Account not found");
+        } else if (accountRepository.findByNumber(account.getNumber()) != null) {
+            throw new IllegalArgumentException("Account number already exists");
+        }
+
+        existingAccount.setNumber(account.getNumber());
+        existingAccount.setBalance(account.getBalance());
+        Account updatedAccount = accountRepository.save(existingAccount);
+        return Optional.of(convertToDTO(updatedAccount));
     }
 
-    public void deleteAccount(UUID id) {
+    public String deleteAccount(UUID id) {
         if (accountRepository.existsById(id)) {
             accountRepository.deleteById(id);
+            return "Account deleted successfully";
         } else {
             throw new IllegalArgumentException("Account not found");
         }
