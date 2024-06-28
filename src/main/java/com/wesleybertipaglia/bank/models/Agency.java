@@ -1,7 +1,6 @@
 package com.wesleybertipaglia.bank.models;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -12,21 +11,24 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
-public class Bank {
+public class Agency {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    private String name;
-
     @Column(unique = true)
-    private String code;
+    private int number;
 
-    @OneToMany(mappedBy = "bank")
-    private List<Agency> agencies;
+    private String address;
+
+    @ManyToOne
+    @JoinColumn(name = "bank_id", nullable = false)
+    private Bank bank;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -42,28 +44,28 @@ public class Bank {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public int getNumber() {
+        return number;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNumber(int number) {
+        this.number = number;
     }
 
-    public String getCode() {
-        return code;
+    public String getAddress() {
+        return address;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public List<Agency> getAgencies() {
-        return agencies;
+    public Bank getBank() {
+        return bank;
     }
 
-    public void setAgencies(List<Agency> agencies) {
-        this.agencies = agencies;
+    public void setBank(Bank bank) {
+        this.bank = bank;
     }
 
     public LocalDateTime getCreatedAt() {
