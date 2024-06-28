@@ -32,8 +32,11 @@ public class BankService {
         Optional<Bank> bankOptional = bankRepository.findById(id);
 
         if (bankOptional.isPresent()) {
-            bank.setId(id);
-            return Optional.of(bankRepository.save(bank));
+            Bank bankToUpdate = bankOptional.get();
+            bankToUpdate.setName(bank.getName());
+            bankToUpdate.setCode(bank.getCode());
+
+            return Optional.of(bankRepository.save(bankToUpdate));
         }
 
         return Optional.empty();
