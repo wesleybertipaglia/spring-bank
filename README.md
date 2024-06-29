@@ -26,7 +26,7 @@ Spring Bank is a RESTful web service that provides banking services. It is built
 
 ### API Documentation
 
-The API documentation is available at `http://localhost:8080/swagger-ui.html`.
+The API documentation is available at [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html).
 
 ## License
 
