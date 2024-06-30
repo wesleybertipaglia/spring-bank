@@ -36,6 +36,28 @@ public class Account {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    public Account() {
+    }
+
+    public Account(Agency agency, int number, float balance) {
+        this.agency = agency;
+        this.number = number;
+        this.balance = balance;
+    }
+
+    public Account(UUID id, int number, float balance) {
+        this.id = id;
+        this.number = number;
+        this.balance = balance;
+    }
+
+    public Account(UUID id, Agency agency, int number, float balance) {
+        this.id = id;
+        this.agency = agency;
+        this.number = number;
+        this.balance = balance;
+    }
+
     public UUID getId() {
         return id;
     }

@@ -8,6 +8,22 @@ public class AccountDTO {
     private int number;
     private float balance;
 
+    public AccountDTO() {
+    }
+
+    public AccountDTO(UUID agencyId, int number, float balance) {
+        this.agencyId = agencyId;
+        this.number = number;
+        this.balance = balance;
+    }
+
+    public AccountDTO(UUID id, UUID agencyId, int number, float balance) {
+        this.id = id;
+        this.agencyId = agencyId;
+        this.number = number;
+        this.balance = balance;
+    }
+
     public UUID getId() {
         return id;
     }
