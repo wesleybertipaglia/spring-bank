@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.wesleybertipaglia.bank.dtos.BankDTO;
-import com.wesleybertipaglia.bank.models.Bank;
 import com.wesleybertipaglia.bank.services.BankService;
 
 @RestController
