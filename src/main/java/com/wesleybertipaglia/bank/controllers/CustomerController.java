@@ -1,53 +1,46 @@
 package com.wesleybertipaglia.bank.controllers;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.wesleybertipaglia.bank.dtos.CustomerDTO;
-import com.wesleybertipaglia.bank.models.Customer;
 import com.wesleybertipaglia.bank.services.CustomerService;
 
 @RestController
-@RequestMapping("/customers")
+@RequestMapping("/api/v1/customers")
 public class CustomerController {
 
     @Autowired
     private CustomerService customerService;
 
+    @PostMapping("/")
+    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customerDTO) {
+        return ResponseEntity.of(customerService.createCustomer(customerDTO));
+    }
+
     @GetMapping("/")
-    public List<CustomerDTO> listCustomers() {
-        return customerService.listCustomers();
+    public ResponseEntity<Page<CustomerDTO>> listCustomers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(customerService.listCustomers(page, size));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable UUID id) {
-        Optional<CustomerDTO> customer = customerService.getCustomerById(id);
-        return customer.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping("/")
-    public CustomerDTO createCustomer(@RequestParam UUID accountId, @RequestBody Customer customer) {
-        return customerService.createCustomer(accountId, customer);
+        return ResponseEntity.of(customerService.getCustomerById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable UUID id, @RequestBody Customer customer) {
-        Optional<CustomerDTO> updatedCustomer = customerService.updateCustomer(id, customer);
-        return updatedCustomer.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable UUID id, @RequestBody CustomerDTO customerDTO) {
+        return ResponseEntity.of(customerService.updateCustomer(id, customerDTO));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable UUID id) {
-        try {
-            customerService.deleteCustomer(id);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<String> deleteCustomer(@PathVariable UUID id) {
+        return ResponseEntity.of(customerService.deleteCustomer(id));
     }
 }
