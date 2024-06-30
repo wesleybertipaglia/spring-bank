@@ -36,6 +36,15 @@ public class Agency {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    public Agency() {
+    }
+
+    public Agency(int number, String address, Bank bank) {
+        this.number = number;
+        this.address = address;
+        this.bank = bank;
+    }
+
     public UUID getId() {
         return id;
     }
