@@ -29,10 +29,6 @@ public class BankMapper {
             throw new IllegalArgumentException("Bank code is required");
         }
 
-        Bank bank = new Bank();
-        bank.setId(dto.getId());
-        bank.setName(dto.getName());
-        bank.setCode(dto.getCode());
-        return bank;
+        return new Bank(dto.getId(), dto.getName(), dto.getCode());
     }
 }
