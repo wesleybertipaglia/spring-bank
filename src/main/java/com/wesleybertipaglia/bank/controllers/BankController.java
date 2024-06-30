@@ -18,6 +18,11 @@ public class BankController {
     @Autowired
     private BankService bankService;
 
+    @PostMapping
+    public ResponseEntity<BankDTO> createBank(@RequestBody Bank bank) {
+        return ResponseEntity.of(bankService.createBank(bank));
+    }
+
     @GetMapping
     public ResponseEntity<Page<BankDTO>> listBanks(
             @RequestParam(defaultValue = "0") int page,
@@ -28,11 +33,6 @@ public class BankController {
     @GetMapping("/{id}")
     public ResponseEntity<BankDTO> getBankById(@PathVariable UUID id) {
         return ResponseEntity.of(bankService.getBankById(id));
-    }
-
-    @PostMapping
-    public ResponseEntity<BankDTO> createBank(@RequestBody Bank bank) {
-        return ResponseEntity.of(bankService.createBank(bank));
     }
 
     @PutMapping("/{id}")
