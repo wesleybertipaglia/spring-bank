@@ -16,6 +16,11 @@ public class BankDTO {
         this.code = code;
     }
 
+    public BankDTO(String name, String code) {
+        this.name = name;
+        this.code = code;
+    }
+
     public UUID getId() {
         return id;
     }

@@ -25,11 +25,12 @@ public class BankService {
     private BankRepository bankRepository;
 
     @Transactional
-    public Optional<BankDTO> createBank(Bank bank) {
-        if (bankRepository.existsByCode(bank.getCode())) {
+    public Optional<BankDTO> createBank(BankDTO bankDTO) {
+        if (bankRepository.existsByCode(bankDTO.getCode())) {
             throw new EntityExistsException("Bank code already exists");
         }
 
+        Bank bank = new Bank(bankDTO.getName(), bankDTO.getCode());
         return Optional.of(BankMapper.convertToDTO(bankRepository.save(bank)));
     }
 
@@ -49,12 +50,16 @@ public class BankService {
     }
 
     @Transactional
-    public Optional<BankDTO> updateBank(UUID id, Bank bank) {
+    public Optional<BankDTO> updateBank(UUID id, BankDTO bankDTO) {
+        if (bankRepository.existsByCode(bankDTO.getCode())) {
+            throw new EntityExistsException("Bank code already exists");
+        }
+
         Bank storedBank = bankRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Bank not found"));
 
-        storedBank.setName(bank.getName());
-        storedBank.setCode(bank.getCode());
+        storedBank.setName(bankDTO.getName());
+        storedBank.setCode(bankDTO.getCode());
 
         return Optional.of(BankMapper.convertToDTO(bankRepository.save(storedBank)));
     }
@@ -67,4 +72,5 @@ public class BankService {
         bankRepository.delete(storedBank);
         return Optional.of("Bank deleted successfully");
     }
+
 }

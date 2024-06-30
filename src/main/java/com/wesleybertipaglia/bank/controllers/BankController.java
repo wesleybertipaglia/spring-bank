@@ -19,8 +19,8 @@ public class BankController {
     private BankService bankService;
 
     @PostMapping
-    public ResponseEntity<BankDTO> createBank(@RequestBody Bank bank) {
-        return ResponseEntity.of(bankService.createBank(bank));
+    public ResponseEntity<BankDTO> createBank(@RequestBody BankDTO bankDTO) {
+        return ResponseEntity.of(bankService.createBank(bankDTO));
     }
 
     @GetMapping
@@ -36,12 +36,12 @@ public class BankController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BankDTO> updateBank(@PathVariable UUID id, @RequestBody Bank bank) {
-        return ResponseEntity.of(bankService.updateBank(id, bank));
+    public ResponseEntity<BankDTO> updateBank(@PathVariable UUID id, @RequestBody BankDTO bankDTO) {
+        return ResponseEntity.of(bankService.updateBank(id, bankDTO));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteBank(@PathVariable UUID id) {
+    public ResponseEntity<String> deleteBank(@PathVariable UUID id) {
         return ResponseEntity.of(bankService.deleteBank(id));
     }
 

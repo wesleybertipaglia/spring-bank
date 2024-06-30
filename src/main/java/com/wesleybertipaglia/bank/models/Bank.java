@@ -34,6 +34,14 @@ public class Bank {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    public Bank() {
+    }
+
+    public Bank(String name, String code) {
+        this.name = name;
+        this.code = code;
+    }
+
     public UUID getId() {
         return id;
     }
