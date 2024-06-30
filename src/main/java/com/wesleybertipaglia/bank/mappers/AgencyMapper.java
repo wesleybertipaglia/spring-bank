@@ -34,11 +34,7 @@ public class AgencyMapper {
             throw new IllegalArgumentException("Agency address is required");
         }
 
-        Agency agency = new Agency();
-        agency.setId(dto.getId());
-        agency.setNumber(dto.getNumber());
-        agency.setAddress(dto.getAddress());
-        return agency;
+        return new Agency(dto.getId(), dto.getNumber(), dto.getAddress());
     }
 
 }

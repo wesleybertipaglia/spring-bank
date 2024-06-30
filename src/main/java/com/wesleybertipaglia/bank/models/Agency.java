@@ -39,6 +39,12 @@ public class Agency {
     public Agency() {
     }
 
+    public Agency(UUID id, int number, String address) {
+        this.id = id;
+        this.number = number;
+        this.address = address;
+    }
+
     public Agency(int number, String address, Bank bank) {
         this.number = number;
         this.address = address;
