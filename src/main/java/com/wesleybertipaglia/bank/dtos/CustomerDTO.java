@@ -7,6 +7,32 @@ public class CustomerDTO {
     private UUID accountId;
     private String name;
     private String email;
+    private String password;
+
+    public CustomerDTO() {
+    }
+
+    public CustomerDTO(UUID accountId, String name, String email, String password) {
+        this.accountId = accountId;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
+    public CustomerDTO(UUID id, UUID accountId, String name, String email, String password) {
+        this.id = id;
+        this.accountId = accountId;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
+    public CustomerDTO(UUID id, UUID accountId, String name, String email) {
+        this.id = id;
+        this.accountId = accountId;
+        this.name = name;
+        this.email = email;
+    }
 
     public UUID getId() {
         return id;
@@ -38,6 +64,14 @@ public class CustomerDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 }

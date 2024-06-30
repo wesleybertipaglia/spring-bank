@@ -38,6 +38,23 @@ public class Customer {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    public Customer() {
+    }
+
+    public Customer(UUID id, String name, String email, String password) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
+    public Customer(String name, String email, String password, Account account) {
+        this.account = account;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
     public UUID getId() {
         return id;
     }
