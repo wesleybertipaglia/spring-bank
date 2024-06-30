@@ -37,7 +37,7 @@ public class AccountService {
         Agency agency = agencyRepository.findById(accountDTO.getAgencyId())
                 .orElseThrow(() -> new EntityNotFoundException("Agency not found"));
 
-        Account account = new Account(agency, accountDTO.getNumber(), accountDTO.getBalance());
+        Account account = new Account(accountDTO.getNumber(), accountDTO.getBalance(), agency);
         return Optional.of(AccountMapper.convertToDTO(accountRepository.save(account)));
     }
 
