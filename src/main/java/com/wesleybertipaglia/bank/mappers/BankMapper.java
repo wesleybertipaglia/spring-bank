@@ -4,7 +4,7 @@ import com.wesleybertipaglia.bank.dtos.BankDTO;
 import com.wesleybertipaglia.bank.models.Bank;
 
 public class BankMapper {
-    public static BankDTO toDTO(Bank bank) {
+    public static BankDTO convertToDTO(Bank bank) {
         if (bank == null) {
             return null;
         } else if (bank.getId() == null) {
@@ -18,7 +18,7 @@ public class BankMapper {
         return new BankDTO(bank.getId(), bank.getName(), bank.getCode());
     }
 
-    public static Bank toEntity(BankDTO dto) {
+    public static Bank convertToEntity(BankDTO dto) {
         if (dto == null) {
             return null;
         } else if (dto.getId() == null) {
