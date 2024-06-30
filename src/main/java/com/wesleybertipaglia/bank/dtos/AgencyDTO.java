@@ -3,10 +3,27 @@ package com.wesleybertipaglia.bank.dtos;
 import java.util.UUID;
 
 public class AgencyDTO {
+
     private UUID id;
     private UUID bankId;
     private int number;
     private String address;
+
+    public AgencyDTO() {
+    }
+
+    public AgencyDTO(UUID id, UUID bankId, int number, String address) {
+        this.id = id;
+        this.bankId = bankId;
+        this.number = number;
+        this.address = address;
+    }
+
+    public AgencyDTO(UUID bankId, int number, String address) {
+        this.bankId = bankId;
+        this.number = number;
+        this.address = address;
+    }
 
     public UUID getId() {
         return id;
