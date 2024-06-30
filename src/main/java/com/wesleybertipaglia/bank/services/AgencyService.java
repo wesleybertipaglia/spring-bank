@@ -35,7 +35,7 @@ public class AgencyService {
         }
 
         Bank bank = bankRepository.findById(agencyDTO.getBankId())
-                .orElseThrow(() -> new IllegalArgumentException("Bank not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Bank not found"));
 
         Agency agency = new Agency(agencyDTO.getNumber(), agencyDTO.getAddress(), bank);
         return Optional.of(AgencyMapper.convertToDTO(agencyRepository.save(agency)));
@@ -62,7 +62,7 @@ public class AgencyService {
                 .orElseThrow(() -> new EntityNotFoundException("Agency not found"));
 
         Bank bank = bankRepository.findById(agencyDTO.getBankId())
-                .orElseThrow(() -> new IllegalArgumentException("Bank not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Bank not found"));
 
         storedAgency.setNumber(agencyDTO.getNumber());
         storedAgency.setAddress(agencyDTO.getAddress());
