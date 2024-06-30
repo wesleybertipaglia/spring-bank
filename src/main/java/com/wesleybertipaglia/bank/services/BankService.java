@@ -1,9 +1,7 @@
 package com.wesleybertipaglia.bank.services;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +15,9 @@ import com.wesleybertipaglia.bank.mappers.BankMapper;
 import com.wesleybertipaglia.bank.models.Bank;
 import com.wesleybertipaglia.bank.repositories.BankRepository;
 
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class BankService {
 
@@ -24,46 +25,46 @@ public class BankService {
     private BankRepository bankRepository;
 
     @Transactional(readOnly = true)
-    public List<BankDTO> listBanks(int page, int size) {
+    public Page<BankDTO> listBanks(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Bank> bankPage = bankRepository.findAll(pageable);
-        return bankPage.getContent().stream()
-                .map(BankMapper::toDTO)
-                .collect(Collectors.toList());
+        return bankRepository.findAll(pageable).map(BankMapper::toDTO);
     }
 
     @Transactional(readOnly = true)
     public Optional<BankDTO> getBankById(UUID id) {
-        return bankRepository.findById(id)
-                .map(BankMapper::toDTO);
-    }
-
-    @Transactional
-    public BankDTO createBank(Bank bank) {
-        if (bankRepository.existsByCode(bank.getCode())) {
-            throw new IllegalArgumentException("Bank code already exists");
+        if (!bankRepository.existsById(id)) {
+            throw new EntityNotFoundException("Bank not found");
         }
 
-        return BankMapper.toDTO(bankRepository.save(bank));
+        return Optional.of(BankMapper.toDTO(bankRepository.findById(id).get()));
     }
 
     @Transactional
-    public BankDTO updateBank(UUID id, Bank bank) {
+    public Optional<BankDTO> createBank(Bank bank) {
+        if (bankRepository.existsByCode(bank.getCode())) {
+            throw new EntityExistsException("Bank code already exists");
+        }
+
+        return Optional.of(BankMapper.toDTO(bankRepository.save(bank)));
+    }
+
+    @Transactional
+    public Optional<BankDTO> updateBank(UUID id, Bank bank) {
         Bank storedBank = bankRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Bank not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Bank not found"));
 
         storedBank.setName(bank.getName());
         storedBank.setCode(bank.getCode());
 
-        return BankMapper.toDTO(bankRepository.save(storedBank));
+        return Optional.of(BankMapper.toDTO(bankRepository.save(storedBank)));
     }
 
     @Transactional
-    public void deleteBank(UUID id) {
-        if (!bankRepository.existsById(id)) {
-            throw new IllegalArgumentException("Bank not found");
-        }
+    public Optional<String> deleteBank(UUID id) {
+        Bank storedBank = bankRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Bank not found"));
 
-        bankRepository.deleteById(id);
+        bankRepository.delete(storedBank);
+        return Optional.of("Bank deleted successfully");
     }
 }
