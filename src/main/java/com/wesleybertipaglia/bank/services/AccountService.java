@@ -1,18 +1,23 @@
 package com.wesleybertipaglia.bank.services;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.wesleybertipaglia.bank.dtos.AccountDTO;
+import com.wesleybertipaglia.bank.mappers.AccountMapper;
 import com.wesleybertipaglia.bank.models.Account;
 import com.wesleybertipaglia.bank.models.Agency;
 import com.wesleybertipaglia.bank.repositories.AccountRepository;
 import com.wesleybertipaglia.bank.repositories.AgencyRepository;
+
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class AccountService {
@@ -23,57 +28,60 @@ public class AccountService {
     @Autowired
     private AgencyRepository agencyRepository;
 
-    public List<AccountDTO> listAccounts() {
-        return accountRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
+    @Transactional
+    public Optional<AccountDTO> createAccount(AccountDTO accountDTO) {
+        if (accountRepository.findByNumber(accountDTO.getNumber()) != null) {
+            throw new EntityExistsException("Account number already exists");
+        }
+
+        Agency agency = agencyRepository.findById(accountDTO.getAgencyId())
+                .orElseThrow(() -> new EntityNotFoundException("Agency not found"));
+
+        Account account = new Account(agency, accountDTO.getNumber(), accountDTO.getBalance());
+        return Optional.of(AccountMapper.convertToDTO(accountRepository.save(account)));
     }
 
+    @Transactional(readOnly = true)
+    public Page<AccountDTO> listAccounts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return accountRepository.findAll(pageable).map(AccountMapper::convertToDTO);
+    }
+
+    @Transactional(readOnly = true)
     public Optional<AccountDTO> getAccountById(UUID id) {
-        return accountRepository.findById(id).map(this::convertToDTO);
-    }
-
-    public AccountDTO createAccount(UUID agencyId, Account account) {
-        Agency agency = agencyRepository.findById(agencyId)
-                .orElseThrow(() -> new IllegalArgumentException("Agency not found"));
-
-        if (accountRepository.findByNumber(account.getNumber()) != null) {
-            throw new IllegalArgumentException("Account number already exists");
+        if (!accountRepository.existsById(id)) {
+            throw new EntityNotFoundException("Account not found");
         }
 
-        account.setAgency(agency);
-        Account savedAccount = accountRepository.save(account);
-        return convertToDTO(savedAccount);
+        return Optional.of(AccountMapper.convertToDTO(accountRepository.findById(id).get()));
     }
 
-    public Optional<AccountDTO> updateAccount(UUID id, Account account) {
-        Account existingAccount = accountRepository.findByNumber(account.getNumber());
+    @Transactional
+    public Optional<AccountDTO> updateAccount(UUID id, AccountDTO accountDTO) {
+        Account storedAccount = accountRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
-        if (existingAccount == null) {
-            throw new IllegalArgumentException("Account not found");
-        } else if (accountRepository.findByNumber(account.getNumber()) != null) {
-            throw new IllegalArgumentException("Account number already exists");
+        Agency agency = agencyRepository.findById(accountDTO.getAgencyId())
+                .orElseThrow(() -> new EntityNotFoundException("Agency not found"));
+
+        if (accountRepository.findByNumber(accountDTO.getNumber()) != null
+                && storedAccount.getNumber() != accountDTO.getNumber()) {
+            throw new EntityExistsException("Account number already exists");
         }
 
-        existingAccount.setNumber(account.getNumber());
-        existingAccount.setBalance(account.getBalance());
-        Account updatedAccount = accountRepository.save(existingAccount);
-        return Optional.of(convertToDTO(updatedAccount));
+        storedAccount.setAgency(agency);
+        storedAccount.setNumber(accountDTO.getNumber());
+        storedAccount.setBalance(accountDTO.getBalance());
+
+        return Optional.of(AccountMapper.convertToDTO(accountRepository.save(storedAccount)));
     }
 
-    public String deleteAccount(UUID id) {
-        if (accountRepository.existsById(id)) {
-            accountRepository.deleteById(id);
-            return "Account deleted successfully";
-        } else {
-            throw new IllegalArgumentException("Account not found");
-        }
+    public Optional<String> deleteAccount(UUID id) {
+        Account storedAccount = accountRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+
+        accountRepository.delete(storedAccount);
+        return Optional.of("Account deleted successfully");
     }
 
-    private AccountDTO convertToDTO(Account account) {
-        AccountDTO dto = new AccountDTO();
-        dto.setId(account.getId());
-        dto.setAgencyId(account.getAgency().getId());
-        dto.setNumber(account.getNumber());
-        dto.setBalance(account.getBalance());
-        return dto;
-    }
 }
