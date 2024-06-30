@@ -7,4 +7,6 @@ import com.wesleybertipaglia.bank.models.Account;
 
 public interface AccountRepository extends JpaRepository<Account, UUID> {
     Account findByNumber(int number);
+
+    boolean existsByNumber(int number);
 }

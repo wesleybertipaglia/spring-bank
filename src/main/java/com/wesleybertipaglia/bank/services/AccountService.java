@@ -30,7 +30,7 @@ public class AccountService {
 
     @Transactional
     public Optional<AccountDTO> createAccount(AccountDTO accountDTO) {
-        if (accountRepository.findByNumber(accountDTO.getNumber()) != null) {
+        if (accountRepository.existsByNumber(accountDTO.getNumber())) {
             throw new EntityExistsException("Account number already exists");
         }
 
@@ -64,7 +64,7 @@ public class AccountService {
         Agency agency = agencyRepository.findById(accountDTO.getAgencyId())
                 .orElseThrow(() -> new EntityNotFoundException("Agency not found"));
 
-        if (accountRepository.findByNumber(accountDTO.getNumber()) != null
+        if (accountRepository.existsByNumber(accountDTO.getNumber())
                 && storedAccount.getNumber() != accountDTO.getNumber()) {
             throw new EntityExistsException("Account number already exists");
         }
