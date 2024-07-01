@@ -1,40 +1,44 @@
 package com.wesleybertipaglia.bank.controllers;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.wesleybertipaglia.bank.dtos.TransferDTO;
-import com.wesleybertipaglia.bank.models.Transfer;
+import com.wesleybertipaglia.bank.enums.TransactionStatus;
 import com.wesleybertipaglia.bank.services.TransferService;
 
 @RestController
-@RequestMapping("/transfers")
+@RequestMapping("/api/v1/transfers")
 public class TransferController {
 
     @Autowired
     private TransferService transferService;
 
     @PostMapping("/")
-    public TransferDTO createTransfer(@RequestBody TransferDTO request) {
-        Transfer transfer = new Transfer();
-        transfer.setValue(request.getValue());
-        return transferService.createTransfer(request.getAccountSourceId(), request.getAccountDestinationId(),
-                transfer);
+    public ResponseEntity<TransferDTO> createTransfer(@RequestBody TransferDTO transferDTO) {
+        return ResponseEntity.of(transferService.createTransfer(transferDTO));
     }
 
     @GetMapping("/")
-    public List<TransferDTO> listTransfers() {
-        return transferService.listTransfers();
+    public ResponseEntity<Page<TransferDTO>> listTransfers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(transferService.listTransfers(page, size));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TransferDTO> getTransferById(@PathVariable UUID id) {
-        Optional<TransferDTO> transfer = transferService.getTransferById(id);
-        return transfer.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.of(transferService.getTransferById(id));
     }
+
+    @PutMapping("/{id}/{status}")
+    public ResponseEntity<TransferDTO> updateTransferStatus(@PathVariable UUID id,
+            @PathVariable TransactionStatus status) {
+        return ResponseEntity.of(transferService.updateTransferStatus(id, status));
+    }
+
 }
