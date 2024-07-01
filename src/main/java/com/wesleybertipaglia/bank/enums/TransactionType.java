@@ -1,4 +1,4 @@
-package com.wesleybertipaglia.bank.models;
+package com.wesleybertipaglia.bank.enums;
 
 public enum TransactionType {
     DEPOSIT,
