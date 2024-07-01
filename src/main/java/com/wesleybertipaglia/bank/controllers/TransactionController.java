@@ -19,19 +19,19 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @PostMapping("/")
-    public ResponseEntity<TransactionDTO> createAgency(@RequestBody TransactionDTO transactionDTO) {
+    public ResponseEntity<TransactionDTO> createTransaction(@RequestBody TransactionDTO transactionDTO) {
         return ResponseEntity.of(transactionService.createTransaction(transactionDTO));
     }
 
     @GetMapping("/")
-    public ResponseEntity<Page<TransactionDTO>> listAgencies(
+    public ResponseEntity<Page<TransactionDTO>> listTransactions(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(transactionService.listTransactions(page, size));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TransactionDTO> getAgencyById(@PathVariable UUID id) {
+    public ResponseEntity<TransactionDTO> getTransactionById(@PathVariable UUID id) {
         return ResponseEntity.of(transactionService.getTransactionById(id));
     }
 
