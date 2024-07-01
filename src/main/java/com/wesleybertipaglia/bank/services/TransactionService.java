@@ -66,7 +66,7 @@ public class TransactionService {
         if (transaction.getStatus() != TransactionStatus.PENDING) {
             throw new IllegalArgumentException("Only pending transactions can be updated");
         } else if (newStatus == TransactionStatus.COMPLETED) {
-            updateAccountBalance(transaction);
+            commitTransaction(transaction);
         }
 
         transaction.setStatus(newStatus);
@@ -76,7 +76,7 @@ public class TransactionService {
     }
 
     @Transactional
-    private void updateAccountBalance(Transaction transaction) {
+    private void commitTransaction(Transaction transaction) {
         Account account = transaction.getAccount();
         if (transaction.getType() == TransactionType.WITHDRAWAL) {
             account.setBalance(account.getBalance() - transaction.getValue());
