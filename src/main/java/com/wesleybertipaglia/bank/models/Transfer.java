@@ -6,6 +6,9 @@ import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.wesleybertipaglia.bank.enums.TransactionStatus;
+import com.wesleybertipaglia.bank.enums.TransactionType;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,11 +33,34 @@ public class Transfer {
 
     private float value;
 
+    private TransactionType type;
+
+    private TransactionStatus status;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    public Transfer() {
+    }
+
+    public Transfer(UUID id, float value, TransactionType type, TransactionStatus status) {
+        this.id = id;
+        this.value = value;
+        this.type = type;
+        this.status = status;
+    }
+
+    public Transfer(Account accountSource, Account accountDestination, float value, TransactionType type,
+            TransactionStatus status) {
+        this.accountSource = accountSource;
+        this.accountDestination = accountDestination;
+        this.value = value;
+        this.type = type;
+        this.status = status;
+    }
 
     public UUID getId() {
         return id;
@@ -68,6 +94,22 @@ public class Transfer {
         this.value = value;
     }
 
+    public TransactionType getType() {
+        return type;
+    }
+
+    public void setType(TransactionType type) {
+        this.type = type;
+    }
+
+    public TransactionStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TransactionStatus status) {
+        this.status = status;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -83,4 +125,5 @@ public class Transfer {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
 }
