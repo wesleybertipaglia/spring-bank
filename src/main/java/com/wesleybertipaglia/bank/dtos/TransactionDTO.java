@@ -8,8 +8,37 @@ public class TransactionDTO {
     private float value;
     private String type;
     private String description;
+    private String status;
 
-    // Getters and setters
+    public TransactionDTO() {
+        this.status = "PENDING";
+    }
+
+    public TransactionDTO(UUID accountId, float value, String type, String description) {
+        this.accountId = accountId;
+        this.value = value;
+        this.type = type;
+        this.status = "PENDING";
+        this.description = description;
+    }
+
+    public TransactionDTO(UUID accountId, float value, String type, String description, String status) {
+        this.accountId = accountId;
+        this.value = value;
+        this.type = type;
+        this.status = status;
+        this.description = description;
+    }
+
+    public TransactionDTO(UUID id, UUID accountId, float value, String type, String description, String status) {
+        this.id = id;
+        this.accountId = accountId;
+        this.value = value;
+        this.type = type;
+        this.status = status;
+        this.description = description;
+    }
+
     public UUID getId() {
         return id;
     }
@@ -49,4 +78,13 @@ public class TransactionDTO {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
 }
