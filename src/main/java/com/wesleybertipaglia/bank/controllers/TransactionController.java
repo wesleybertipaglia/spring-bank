@@ -1,54 +1,44 @@
 package com.wesleybertipaglia.bank.controllers;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.wesleybertipaglia.bank.dtos.TransactionDTO;
-import com.wesleybertipaglia.bank.models.Transaction;
+import com.wesleybertipaglia.bank.enums.TransactionStatus;
 import com.wesleybertipaglia.bank.services.TransactionService;
 
 @RestController
-@RequestMapping("/transactions")
+@RequestMapping("/api/v1/transactions")
 public class TransactionController {
 
     @Autowired
     private TransactionService transactionService;
 
     @PostMapping("/")
-    public TransactionDTO createTransaction(@RequestParam UUID accountId, @RequestBody Transaction transaction) {
-        return transactionService.createTransaction(accountId, transaction);
+    public ResponseEntity<TransactionDTO> createAgency(@RequestBody TransactionDTO transactionDTO) {
+        return ResponseEntity.of(transactionService.createTransaction(transactionDTO));
     }
 
     @GetMapping("/")
-    public List<TransactionDTO> listTransactions() {
-        return transactionService.listTransactions();
+    public ResponseEntity<Page<TransactionDTO>> listAgencies(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(transactionService.listTransactions(page, size));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TransactionDTO> getTransactionById(@PathVariable UUID id) {
-        Optional<TransactionDTO> transaction = transactionService.getTransactionById(id);
-        return transaction.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<TransactionDTO> getAgencyById(@PathVariable UUID id) {
+        return ResponseEntity.of(transactionService.getTransactionById(id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<TransactionDTO> updateTransaction(@PathVariable UUID id,
-            @RequestBody Transaction transaction) {
-        Optional<TransactionDTO> updatedTransaction = transactionService.updateTransaction(id, transaction);
-        return updatedTransaction.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @PutMapping("/{id}/{status}")
+    public ResponseEntity<TransactionDTO> updateTransactionStatus(@PathVariable UUID id,
+            @PathVariable TransactionStatus status) {
+        return ResponseEntity.of(transactionService.updateTransactionStatus(id, status));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTransaction(@PathVariable UUID id) {
-        try {
-            transactionService.deleteTransaction(id);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
 }
