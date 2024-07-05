@@ -12,22 +12,16 @@ import org.springframework.transaction.annotation.Transactional;
 import com.wesleybertipaglia.bank.dtos.UserDTO;
 import com.wesleybertipaglia.bank.mappers.UserMapper;
 import com.wesleybertipaglia.bank.models.User;
-import com.wesleybertipaglia.bank.models.Account;
 import com.wesleybertipaglia.bank.repositories.UserRepository;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
-
-import com.wesleybertipaglia.bank.repositories.AccountRepository;
 
 @Service
 public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private AccountRepository accountRepository;
 
     @Transactional
     public Optional<UserDTO> createUser(UserDTO userDTO) {
@@ -39,15 +33,8 @@ public class UserService {
             throw new EntityExistsException("User email already exists");
         }
 
-        Account account = accountRepository.findById(userDTO.getAccountId())
-                .orElseThrow(() -> new EntityNotFoundException("Account not found"));
-
-        if (userRepository.existsByAccount(account)) {
-            throw new EntityExistsException("Account already has a user");
-        }
-
         User user = new User(userDTO.getName(), userDTO.getUsername(), userDTO.getEmail(),
-                userDTO.getPassword(), userDTO.getRole(), account);
+                userDTO.getPassword(), userDTO.getRole());
         return Optional.of(UserMapper.convertToDTO(userRepository.save(user)));
     }
 
@@ -71,14 +58,6 @@ public class UserService {
         User storedUser = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        Account account = accountRepository.findById(userDTO.getAccountId())
-                .orElseThrow(() -> new EntityNotFoundException("Account not found"));
-
-        if (userRepository.existsByAccount(account)
-                && storedUser.getAccount().getId() != userDTO.getAccountId()) {
-            throw new EntityExistsException("Account already has a user");
-        }
-
         if (userRepository.existsByUsername(userDTO.getUsername())
                 && storedUser.getUsername() != userDTO.getUsername()) {
             throw new EntityExistsException("Username already exists");
@@ -89,7 +68,6 @@ public class UserService {
             throw new EntityExistsException("User email already exists");
         }
 
-        storedUser.setAccount(account);
         storedUser.setName(userDTO.getName());
         storedUser.setUsername(userDTO.getUsername());
         storedUser.setEmail(userDTO.getEmail());

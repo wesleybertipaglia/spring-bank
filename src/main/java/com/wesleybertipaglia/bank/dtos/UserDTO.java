@@ -6,7 +6,6 @@ import com.wesleybertipaglia.bank.enums.Roles;
 
 public class UserDTO {
     private UUID id;
-    private UUID accountId;
     private String name;
     private String username;
     private String email;
@@ -16,8 +15,7 @@ public class UserDTO {
     public UserDTO() {
     }
 
-    public UserDTO(UUID accountId, String name, String username, String email, String password, Roles role) {
-        this.accountId = accountId;
+    public UserDTO(String name, String username, String email, String password, Roles role) {
         this.name = name;
         this.username = username;
         this.email = email;
@@ -25,9 +23,8 @@ public class UserDTO {
         this.role = role;
     }
 
-    public UserDTO(UUID id, UUID accountId, String name, String username, String email, String password, Roles role) {
+    public UserDTO(UUID id, String name, String username, String email, String password, Roles role) {
         this.id = id;
-        this.accountId = accountId;
         this.name = name;
         this.username = username;
         this.email = email;
@@ -35,9 +32,8 @@ public class UserDTO {
         this.role = role;
     }
 
-    public UserDTO(UUID id, UUID accountId, String name, String username, String email, Roles role) {
+    public UserDTO(UUID id, String name, String username, String email, Roles role) {
         this.id = id;
-        this.accountId = accountId;
         this.name = name;
         this.username = username;
         this.email = email;
@@ -50,14 +46,6 @@ public class UserDTO {
 
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    public UUID getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(UUID accountId) {
-        this.accountId = accountId;
     }
 
     public String getName() {

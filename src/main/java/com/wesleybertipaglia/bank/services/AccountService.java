@@ -2,6 +2,7 @@ package com.wesleybertipaglia.bank.services;
 
 import java.util.Optional;
 import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,8 +14,10 @@ import com.wesleybertipaglia.bank.dtos.AccountDTO;
 import com.wesleybertipaglia.bank.mappers.AccountMapper;
 import com.wesleybertipaglia.bank.models.Account;
 import com.wesleybertipaglia.bank.models.Agency;
+import com.wesleybertipaglia.bank.models.User;
 import com.wesleybertipaglia.bank.repositories.AccountRepository;
 import com.wesleybertipaglia.bank.repositories.AgencyRepository;
+import com.wesleybertipaglia.bank.repositories.UserRepository;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,6 +31,9 @@ public class AccountService {
     @Autowired
     private AgencyRepository agencyRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Transactional
     public Optional<AccountDTO> createAccount(AccountDTO accountDTO) {
         if (accountRepository.existsByNumber(accountDTO.getNumber())) {
@@ -37,7 +43,10 @@ public class AccountService {
         Agency agency = agencyRepository.findById(accountDTO.getAgencyId())
                 .orElseThrow(() -> new EntityNotFoundException("Agency not found"));
 
-        Account account = new Account(accountDTO.getNumber(), accountDTO.getBalance(), agency);
+        User user = userRepository.findById(accountDTO.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        Account account = new Account(accountDTO.getNumber(), accountDTO.getBalance(), agency, user);
         return Optional.of(AccountMapper.convertToDTO(accountRepository.save(account)));
     }
 
@@ -64,12 +73,16 @@ public class AccountService {
         Agency agency = agencyRepository.findById(accountDTO.getAgencyId())
                 .orElseThrow(() -> new EntityNotFoundException("Agency not found"));
 
+        User user = userRepository.findById(accountDTO.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
         if (accountRepository.existsByNumber(accountDTO.getNumber())
                 && storedAccount.getNumber() != accountDTO.getNumber()) {
             throw new EntityExistsException("Account number already exists");
         }
 
         storedAccount.setAgency(agency);
+        storedAccount.setUser(user);
         storedAccount.setNumber(accountDTO.getNumber());
         storedAccount.setBalance(accountDTO.getBalance());
 

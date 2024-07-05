@@ -18,19 +18,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 
-@Entity
+@Entity(name = "users")
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-
-    @ManyToOne
-    @JoinColumn(name = "account_id", nullable = false)
-    private Account account;
 
     private String name;
 
@@ -42,7 +36,7 @@ public class User implements UserDetails {
 
     private String password;
 
-    private Roles role = Roles.ROLE_USER;
+    private Roles role = Roles.USER;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -62,18 +56,17 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    public User(String name, String username, String email, String password, Roles role, Account account) {
+    public User(String name, String username, String email, String password, Roles role) {
         this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
         this.role = role;
-        this.account = account;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (this.role == Roles.ROLE_ADMIN) {
+        if (this.role == Roles.ADMIN) {
             return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
         }
 
@@ -86,14 +79,6 @@ public class User implements UserDetails {
 
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
     }
 
     public String getName() {
