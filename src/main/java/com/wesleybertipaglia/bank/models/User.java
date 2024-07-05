@@ -31,9 +31,6 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String username;
 
-    @Column(unique = true)
-    private String email;
-
     private String password;
 
     private Roles role = Roles.USER;
@@ -47,19 +44,17 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(UUID id, String name, String username, String email, String password, Roles role) {
+    public User(UUID id, String name, String username, String password, Roles role) {
         this.id = id;
         this.name = name;
         this.username = username;
-        this.email = email;
         this.password = password;
         this.role = role;
     }
 
-    public User(String name, String username, String email, String password, Roles role) {
+    public User(String name, String username, String password, Roles role) {
         this.name = name;
         this.username = username;
-        this.email = email;
         this.password = password;
         this.role = role;
     }
@@ -95,14 +90,6 @@ public class User implements UserDetails {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPassword() {

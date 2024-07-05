@@ -7,11 +7,7 @@ import com.wesleybertipaglia.bank.models.User;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
 
-    User findByEmail(String email);
-
     User findByUsername(String username);
-
-    Boolean existsByEmail(String email);
 
     Boolean existsByUsername(String username);
 

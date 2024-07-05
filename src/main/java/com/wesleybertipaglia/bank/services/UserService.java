@@ -29,12 +29,7 @@ public class UserService {
             throw new EntityExistsException("Username already exists");
         }
 
-        if (userRepository.existsByEmail(userDTO.getEmail())) {
-            throw new EntityExistsException("User email already exists");
-        }
-
-        User user = new User(userDTO.getName(), userDTO.getUsername(), userDTO.getEmail(),
-                userDTO.getPassword(), userDTO.getRole());
+        User user = new User(userDTO.getName(), userDTO.getUsername(), userDTO.getPassword(), userDTO.getRole());
         return Optional.of(UserMapper.convertToDTO(userRepository.save(user)));
     }
 
@@ -63,14 +58,8 @@ public class UserService {
             throw new EntityExistsException("Username already exists");
         }
 
-        if (userRepository.existsByEmail(userDTO.getEmail())
-                && storedUser.getEmail() != userDTO.getEmail()) {
-            throw new EntityExistsException("User email already exists");
-        }
-
         storedUser.setName(userDTO.getName());
         storedUser.setUsername(userDTO.getUsername());
-        storedUser.setEmail(userDTO.getEmail());
         storedUser.setPassword(userDTO.getPassword());
         storedUser.setRole(userDTO.getRole());
 

@@ -14,14 +14,11 @@ public class UserMapper {
             throw new IllegalArgumentException("User name is required");
         } else if (user.getUsername() == null) {
             throw new IllegalArgumentException("Username is required");
-        } else if (user.getEmail() == null) {
-            throw new IllegalArgumentException("User email is required");
         } else if (user.getRole() == null) {
             throw new IllegalArgumentException("User role is required");
         }
 
-        return new UserDTO(user.getId(), user.getName(),
-                user.getUsername(), user.getEmail(), user.getRole());
+        return new UserDTO(user.getId(), user.getName(), user.getUsername(), user.getRole());
     }
 
     public static User convertToEntity(UserDTO userDTO) {
@@ -33,16 +30,14 @@ public class UserMapper {
             throw new IllegalArgumentException("User name is required");
         } else if (userDTO.getUsername() == null) {
             throw new IllegalArgumentException("Username is required");
-        } else if (userDTO.getEmail() == null) {
-            throw new IllegalArgumentException("User email is required");
         } else if (userDTO.getPassword() == null) {
             throw new IllegalArgumentException("User password is required");
         } else if (userDTO.getRole() == null) {
             throw new IllegalArgumentException("User role is required");
         }
 
-        return new User(userDTO.getId(), userDTO.getName(), userDTO.getUsername(),
-                userDTO.getEmail(), userDTO.getPassword(), userDTO.getRole());
+        return new User(userDTO.getId(), userDTO.getName(), userDTO.getUsername(), userDTO.getPassword(),
+                userDTO.getRole());
     }
 
 }
