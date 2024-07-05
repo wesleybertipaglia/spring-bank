@@ -24,75 +24,85 @@ import com.wesleybertipaglia.bank.repositories.AccountRepository;
 public class UserService {
 
     @Autowired
-    private UserRepository customerRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private AccountRepository accountRepository;
 
     @Transactional
-    public Optional<UserDTO> createUser(UserDTO customerDTO) {
-        if (customerRepository.existsByEmail(customerDTO.getEmail())) {
+    public Optional<UserDTO> createUser(UserDTO userDTO) {
+        if (userRepository.existsByUsername(userDTO.getUsername())) {
+            throw new EntityExistsException("Username already exists");
+        }
+
+        if (userRepository.existsByEmail(userDTO.getEmail())) {
             throw new EntityExistsException("User email already exists");
         }
 
-        Account account = accountRepository.findById(customerDTO.getAccountId())
+        Account account = accountRepository.findById(userDTO.getAccountId())
                 .orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
-        if (customerRepository.existsByAccount(account)) {
-            throw new EntityExistsException("Account already has a customer");
+        if (userRepository.existsByAccount(account)) {
+            throw new EntityExistsException("Account already has a user");
         }
 
-        User customer = new User(customerDTO.getName(), customerDTO.getEmail(), customerDTO.getPassword(),
-                account);
-        return Optional.of(UserMapper.convertToDTO(customerRepository.save(customer)));
+        User user = new User(userDTO.getName(), userDTO.getUsername(), userDTO.getEmail(),
+                userDTO.getPassword(), account);
+        return Optional.of(UserMapper.convertToDTO(userRepository.save(user)));
     }
 
     @Transactional(readOnly = true)
     public Page<UserDTO> listUsers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return customerRepository.findAll(pageable).map(UserMapper::convertToDTO);
+        return userRepository.findAll(pageable).map(UserMapper::convertToDTO);
     }
 
     @Transactional(readOnly = true)
     public Optional<UserDTO> getUserById(UUID id) {
-        if (!customerRepository.existsById(id)) {
+        if (!userRepository.existsById(id)) {
             throw new EntityNotFoundException("User not found");
         }
 
-        return Optional.of(UserMapper.convertToDTO(customerRepository.findById(id).get()));
+        return Optional.of(UserMapper.convertToDTO(userRepository.findById(id).get()));
     }
 
     @Transactional
-    public Optional<UserDTO> updateUser(UUID id, UserDTO customerDTO) {
-        User storedUser = customerRepository.findById(id)
+    public Optional<UserDTO> updateUser(UUID id, UserDTO userDTO) {
+        User storedUser = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        Account account = accountRepository.findById(customerDTO.getAccountId())
+        Account account = accountRepository.findById(userDTO.getAccountId())
                 .orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
-        if (customerRepository.existsByAccount(account)
-                && storedUser.getAccount().getId() != customerDTO.getAccountId()) {
-            throw new EntityExistsException("Account already has a customer");
+        if (userRepository.existsByAccount(account)
+                && storedUser.getAccount().getId() != userDTO.getAccountId()) {
+            throw new EntityExistsException("Account already has a user");
         }
 
-        if (customerRepository.existsByEmail(customerDTO.getEmail())
-                && storedUser.getEmail() != customerDTO.getEmail()) {
+        if (userRepository.existsByUsername(userDTO.getUsername())
+                && storedUser.getUsername() != userDTO.getUsername()) {
+            throw new EntityExistsException("Username already exists");
+        }
+
+        if (userRepository.existsByEmail(userDTO.getEmail())
+                && storedUser.getEmail() != userDTO.getEmail()) {
             throw new EntityExistsException("User email already exists");
         }
 
         storedUser.setAccount(account);
-        storedUser.setName(customerDTO.getName());
-        storedUser.setEmail(customerDTO.getEmail());
-        storedUser.setPassword(customerDTO.getPassword());
+        storedUser.setName(userDTO.getName());
+        storedUser.setUsername(userDTO.getUsername());
+        storedUser.setEmail(userDTO.getEmail());
+        storedUser.setPassword(userDTO.getPassword());
 
-        return Optional.of(UserMapper.convertToDTO(customerRepository.save(storedUser)));
+        return Optional.of(UserMapper.convertToDTO(userRepository.save(storedUser)));
     }
 
     public Optional<String> deleteUser(UUID id) {
-        User storedUser = customerRepository.findById(id)
+        User storedUser = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        customerRepository.delete(storedUser);
+        userRepository.delete(storedUser);
         return Optional.of("User deleted successfully");
     }
 

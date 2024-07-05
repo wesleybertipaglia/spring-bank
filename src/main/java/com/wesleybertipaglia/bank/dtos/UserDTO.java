@@ -6,31 +6,35 @@ public class UserDTO {
     private UUID id;
     private UUID accountId;
     private String name;
+    private String username;
     private String email;
     private String password;
 
     public UserDTO() {
     }
 
-    public UserDTO(UUID accountId, String name, String email, String password) {
+    public UserDTO(UUID accountId, String name, String username, String email, String password) {
         this.accountId = accountId;
         this.name = name;
+        this.username = username;
         this.email = email;
         this.password = password;
     }
 
-    public UserDTO(UUID id, UUID accountId, String name, String email, String password) {
+    public UserDTO(UUID id, UUID accountId, String name, String username, String email, String password) {
         this.id = id;
         this.accountId = accountId;
         this.name = name;
+        this.username = username;
         this.email = email;
         this.password = password;
     }
 
-    public UserDTO(UUID id, UUID accountId, String name, String email) {
+    public UserDTO(UUID id, UUID accountId, String name, String username, String email) {
         this.id = id;
         this.accountId = accountId;
         this.name = name;
+        this.username = username;
         this.email = email;
     }
 
@@ -56,6 +60,14 @@ public class UserDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {

@@ -1,10 +1,14 @@
 package com.wesleybertipaglia.bank.models;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,7 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,6 +30,9 @@ public class User {
     private Account account;
 
     private String name;
+
+    @Column(unique = true)
+    private String username;
 
     @Column(unique = true)
     private String email;
@@ -41,18 +48,45 @@ public class User {
     public User() {
     }
 
-    public User(UUID id, String name, String email, String password) {
+    public User(UUID id, String name, String username, String email, String password) {
         this.id = id;
         this.name = name;
+        this.username = username;
         this.email = email;
         this.password = password;
     }
 
-    public User(String name, String email, String password, Account account) {
+    public User(String name, String username, String email, String password, Account account) {
         this.account = account;
         this.name = name;
+        this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
     }
 
     public UUID getId() {
@@ -77,6 +111,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {
