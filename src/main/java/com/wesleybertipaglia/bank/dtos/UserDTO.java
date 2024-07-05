@@ -2,24 +2,24 @@ package com.wesleybertipaglia.bank.dtos;
 
 import java.util.UUID;
 
-public class CustomerDTO {
+public class UserDTO {
     private UUID id;
     private UUID accountId;
     private String name;
     private String email;
     private String password;
 
-    public CustomerDTO() {
+    public UserDTO() {
     }
 
-    public CustomerDTO(UUID accountId, String name, String email, String password) {
+    public UserDTO(UUID accountId, String name, String email, String password) {
         this.accountId = accountId;
         this.name = name;
         this.email = email;
         this.password = password;
     }
 
-    public CustomerDTO(UUID id, UUID accountId, String name, String email, String password) {
+    public UserDTO(UUID id, UUID accountId, String name, String email, String password) {
         this.id = id;
         this.accountId = accountId;
         this.name = name;
@@ -27,7 +27,7 @@ public class CustomerDTO {
         this.password = password;
     }
 
-    public CustomerDTO(UUID id, UUID accountId, String name, String email) {
+    public UserDTO(UUID id, UUID accountId, String name, String email) {
         this.id = id;
         this.accountId = accountId;
         this.name = name;

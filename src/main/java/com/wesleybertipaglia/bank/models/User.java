@@ -15,7 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-public class Customer {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -38,17 +38,17 @@ public class Customer {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public Customer() {
+    public User() {
     }
 
-    public Customer(UUID id, String name, String email, String password) {
+    public User(UUID id, String name, String email, String password) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
     }
 
-    public Customer(String name, String email, String password, Account account) {
+    public User(String name, String email, String password, Account account) {
         this.account = account;
         this.name = name;
         this.email = email;
