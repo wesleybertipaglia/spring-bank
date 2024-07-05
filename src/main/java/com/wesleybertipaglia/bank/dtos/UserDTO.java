@@ -2,6 +2,8 @@ package com.wesleybertipaglia.bank.dtos;
 
 import java.util.UUID;
 
+import com.wesleybertipaglia.bank.enums.Roles;
+
 public class UserDTO {
     private UUID id;
     private UUID accountId;
@@ -9,33 +11,37 @@ public class UserDTO {
     private String username;
     private String email;
     private String password;
+    private Roles role;
 
     public UserDTO() {
     }
 
-    public UserDTO(UUID accountId, String name, String username, String email, String password) {
+    public UserDTO(UUID accountId, String name, String username, String email, String password, Roles role) {
         this.accountId = accountId;
         this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
-    public UserDTO(UUID id, UUID accountId, String name, String username, String email, String password) {
+    public UserDTO(UUID id, UUID accountId, String name, String username, String email, String password, Roles role) {
         this.id = id;
         this.accountId = accountId;
         this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
-    public UserDTO(UUID id, UUID accountId, String name, String username, String email) {
+    public UserDTO(UUID id, UUID accountId, String name, String username, String email, Roles role) {
         this.id = id;
         this.accountId = accountId;
         this.name = name;
         this.username = username;
         this.email = email;
+        this.role = role;
     }
 
     public UUID getId() {
@@ -84,6 +90,14 @@ public class UserDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Roles getRole() {
+        return role;
+    }
+
+    public void setRole(Roles role) {
+        this.role = role;
     }
 
 }

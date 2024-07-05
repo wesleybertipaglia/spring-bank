@@ -47,7 +47,7 @@ public class UserService {
         }
 
         User user = new User(userDTO.getName(), userDTO.getUsername(), userDTO.getEmail(),
-                userDTO.getPassword(), account);
+                userDTO.getPassword(), userDTO.getRole(), account);
         return Optional.of(UserMapper.convertToDTO(userRepository.save(user)));
     }
 
@@ -94,6 +94,7 @@ public class UserService {
         storedUser.setUsername(userDTO.getUsername());
         storedUser.setEmail(userDTO.getEmail());
         storedUser.setPassword(userDTO.getPassword());
+        storedUser.setRole(userDTO.getRole());
 
         return Optional.of(UserMapper.convertToDTO(userRepository.save(storedUser)));
     }

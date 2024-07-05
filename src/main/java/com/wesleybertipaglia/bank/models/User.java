@@ -8,7 +8,10 @@ import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.wesleybertipaglia.bank.enums.Roles;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,6 +42,8 @@ public class User implements UserDetails {
 
     private String password;
 
+    private Roles role = Roles.ROLE_USER;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -48,45 +53,31 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(UUID id, String name, String username, String email, String password) {
+    public User(UUID id, String name, String username, String email, String password, Roles role) {
         this.id = id;
         this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
-    public User(String name, String username, String email, String password, Account account) {
-        this.account = account;
+    public User(String name, String username, String email, String password, Roles role, Account account) {
         this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
+        this.role = role;
+        this.account = account;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
+        if (this.role == Roles.ROLE_ADMIN) {
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     public UUID getId() {
@@ -135,6 +126,14 @@ public class User implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Roles getRole() {
+        return role;
+    }
+
+    public void setRole(Roles role) {
+        this.role = role;
     }
 
     public LocalDateTime getCreatedAt() {
