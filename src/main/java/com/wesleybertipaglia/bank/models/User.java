@@ -1,36 +1,39 @@
 package com.wesleybertipaglia.bank.models;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import com.wesleybertipaglia.bank.enums.Roles;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 
-@Entity
-public class Customer {
+@Entity(name = "users")
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id", nullable = false)
-    private Account account;
-
     private String name;
 
     @Column(unique = true)
-    private String email;
+    private String username;
 
     private String password;
+
+    private Roles role = Roles.USER;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -38,21 +41,31 @@ public class Customer {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public Customer() {
+    public User() {
     }
 
-    public Customer(UUID id, String name, String email, String password) {
+    public User(UUID id, String name, String username, String password, Roles role) {
         this.id = id;
         this.name = name;
-        this.email = email;
+        this.username = username;
         this.password = password;
+        this.role = role;
     }
 
-    public Customer(String name, String email, String password, Account account) {
-        this.account = account;
+    public User(String name, String username, String password, Roles role) {
         this.name = name;
-        this.email = email;
+        this.username = username;
         this.password = password;
+        this.role = role;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (this.role == Roles.ADMIN) {
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        }
+
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     public UUID getId() {
@@ -63,14 +76,6 @@ public class Customer {
         this.id = id;
     }
 
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
-
     public String getName() {
         return name;
     }
@@ -79,12 +84,12 @@ public class Customer {
         this.name = name;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUsername() {
+        return username;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -93,6 +98,14 @@ public class Customer {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Roles getRole() {
+        return role;
+    }
+
+    public void setRole(Roles role) {
+        this.role = role;
     }
 
     public LocalDateTime getCreatedAt() {

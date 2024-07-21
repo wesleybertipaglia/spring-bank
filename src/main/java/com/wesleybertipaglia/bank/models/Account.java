@@ -25,6 +25,10 @@ public class Account {
     @JoinColumn(name = "agency_id", nullable = false)
     private Agency agency;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @Column(unique = true)
     private int number;
 
@@ -45,10 +49,11 @@ public class Account {
         this.balance = balance;
     }
 
-    public Account(int number, float balance, Agency agency) {
-        this.agency = agency;
+    public Account(int number, float balance, Agency agency, User user) {
         this.number = number;
         this.balance = balance;
+        this.agency = agency;
+        this.user = user;
     }
 
     public UUID getId() {
@@ -65,6 +70,14 @@ public class Account {
 
     public void setAgency(Agency agency) {
         this.agency = agency;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public int getNumber() {
