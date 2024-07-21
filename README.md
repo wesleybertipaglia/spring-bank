@@ -2,6 +2,41 @@
 
 Spring Bank is a RESTful web service that provides banking services. It is built using Spring Boot, Spring Data JPA, PostgreSQL, and Docker.
 
+## Table of Contents
+
+- [Getting Started](#getting-started)
+- [Features](#features)
+- [ERD Diagram](#erd-diagram)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Getting Started
+
+### Running with Docker
+
+The easiest way to run the application is with Docker.
+
+```bash
+docker-compose up -d
+```
+
+### Running with Maven
+
+Alternatively, you can run the application with Maven.
+
+#### Prerequisites
+
+- Java 22 or later (it's compatible with Java 17, but you may need to update the `sourceCompatibility` and `targetCompatibility` in the `build.gradle` file)
+- Maven 3.8.1 or later
+
+```bash
+mvn spring-boot:run
+```
+
+> The application will be available at [http://localhost:8080](http://localhost:8080).
+
+> The Adminer will be available at [http://localhost:8081](http://localhost:8081).
+
 ## Features
 
 - Create a new account
@@ -10,34 +45,69 @@ Spring Bank is a RESTful web service that provides banking services. It is built
 - Withdraw money
 - Transfer money between accounts
 
-## Usage
+## ERD Diagram
 
-### Prerequisites
+The following Entity-Relationship Diagram (ERD) shows the relationships between the entities in the application:
 
-- Docker and Docker Compose
-- Java 17 or later
-- Maven
+```mermaid
+classDiagram
+    class User {
+        uuid id
+        string name
+        string username
+        roles role
+        string password
+        datetime created_at
+        datetime updated_at
+    }
 
-### Running the application
+    class Agency {
+        uuid id        
+        uuid bank_id
+        int number
+        string address
+        datetime created_at
+        datetime updated_at
+    }
+    
+    class Account {
+        uuid id
+        uuid user_id
+        uuid agency_id
+        int number
+        float balance      
+        datetime created_at
+        datetime updated_at
+    }
+    
+    class Bank {
+        uuid id
+        string name
+        string code        
+        datetime created_at
+        datetime updated_at
+    }    
 
-1. Clone the repository
-2. Run the command `docker-compose up` to start the PostgreSQL database
-3. Run the application using the command `mvn spring-boot:run` or start the application in your IDE
+    class Transaction {
+        uuid id
+        uuid account_id
+        float value
+        transaction_type type
+        string description
+        datetime created_at
+        datetime updated_at
+    }
 
-### API Documentation
+    User "1" -- "n" Account : owns
+    Agency "1" -- "n" Account : has
+    Bank "1" -- "n" Agency : has
+    User "1" -- "n" Transaction : makes
+```
 
-The API documentation is available at [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html).
+## Contributing
+
+Contributions are welcome! Please fork the repository and submit a pull request with your changes.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgements
-
-- [Spring Boot](https://spring.io/projects/spring-boot)
-- [Spring Data JPA](https://spring.io/projects/spring-data-jpa)
-- [PostgreSQL](https://www.postgresql.org/)
-- [Docker](https://www.docker.com/)
-- [Swagger](https://swagger.io/)
-- [JUnit 5](https://junit.org/junit5/)
-- [Mockito](https://site.mockito.org/)
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
